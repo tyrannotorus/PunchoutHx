@@ -35,7 +35,7 @@ class Main extends Sprite {
 		container = new Sprite();
 		
 		ring = new Ring();
-		ring.loadRing("img/title_screen.gif");
+		ring.loadRing("img/ring-01.png");
 		container.addChild(ring);
 		
 		player = new Player();
