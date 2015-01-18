@@ -1,58 +1,24 @@
 package com.tyrannotorus.punchout;
 
-import openfl.Assets;
 import openfl.display.Sprite;
-import openfl.display.Bitmap;
 import openfl.display.StageDisplayState;
 import openfl.events.Event;
-import openfl.Lib;
-import openfl.media.Sound;
-import openfl.media.SoundChannel;
-import openfl.media.SoundTransform;
 
 class Main extends Sprite {
 
 	// Game Dimensions
-	private var GAME_WIDTH:Int = 256;
-	private var GAME_HEIGHT:Int = 224;
-	private var stageWidth (get, null):Int;
-	private var stageHeight (get, null):Int;
-	
-	private var container:Sprite;
-	private var menu:Menu;
-	private var ring:Ring;
-	private var player:Player;
-	private var opponent:Opponent;
-	private var healthBars:HealthBars;
-	
-	// Music and sfx
-	private var music:Sound;
-	private var musicChannel:SoundChannel;
-	private var musicTransform:SoundTransform;
-	
+	private var game:Game;
+		
 	public function new() {
-		
-		container = new Sprite();
-		
-		ring = new Ring();
-		ring.loadRing("img/ring-01.png");
-		container.addChild(ring);
-		
-		player = new Player();
-		opponent = new Opponent();
-		healthBars = new HealthBars();
-		
 		super();
-		addChild(container);
-				
-		musicTransform = new SoundTransform(0.1);
-		music = Assets.getSound("audio/title_music.mp3", true);
-		musicChannel = music.play();
-		musicChannel.soundTransform = musicTransform;
-		
+		game = new Game();
+		addChild(game);
 		addGameListeners();
 	}
 	
+	/**
+	 * Adds Listeners necessary to game
+	 */
 	private function addGameListeners():Void {
 		stage.addEventListener(Event.RESIZE, onGameResize);
 	}
@@ -61,7 +27,7 @@ class Main extends Sprite {
 	 * Returns width of stage in windowed or fullscreen
 	 * @return {Int}
 	 */
-	private function get_stageWidth():Int {
+	private function getStageWidth():Int {
 		return (stage.displayState == StageDisplayState.FULL_SCREEN_INTERACTIVE) ? stage.fullScreenWidth : stage.stageWidth;
 	}
 	
@@ -69,7 +35,7 @@ class Main extends Sprite {
 	 * Returns height of stage in windowed or fullscreen
 	 * @return {Int}
 	 */
-	private function get_stageHeight():Int {
+	private function getStageHeight():Int {
 		return (stage.displayState == StageDisplayState.FULL_SCREEN_INTERACTIVE) ? stage.fullScreenHeight : stage.stageHeight;
 	}
 	
@@ -80,20 +46,20 @@ class Main extends Sprite {
 	private function onGameResize(e:Event):Void {
 		
 		var scale:Float = 1;
+		var stageWidth:Int = getStageWidth();
+		var stageHeight:Int = getStageHeight();
+		var gameWidth:Int = Constants.GAME_WIDTH;
+		var gameHeight:Int = Constants.GAME_HEIGHT;
 				
 		// Find which dimension to scale by
-		if (GAME_WIDTH / stageWidth > GAME_HEIGHT / stageHeight) {
-			scale = stageWidth / GAME_WIDTH;		
+		if (gameWidth / stageWidth > gameHeight / stageHeight) {
+			scale = stageWidth / gameWidth;		
 		} else {
-			scale = stage.stageHeight / GAME_HEIGHT;
+			scale = stageHeight / gameHeight;
 		}
 					
-		container.scaleX = container.scaleY = scale;
-		container.x = Std.int((stageWidth - (GAME_WIDTH * scale)) * 0.5);
-		container.y = Std.int((stageHeight - (GAME_HEIGHT * scale)) * 0.5);
+		game.scaleX = game.scaleY = scale;
+		game.x = Std.int((stageWidth - (gameWidth * scale)) * 0.5);
+		game.y = Std.int((stageHeight - (gameHeight * scale)) * 0.5);
 	}
-	
-	
-	
-	
 }
