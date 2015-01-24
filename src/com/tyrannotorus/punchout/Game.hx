@@ -22,6 +22,8 @@ class Game extends Sprite {
 	// Fonts and text typing
 	public var textManager:TextManager;
 	
+	private var externalAssetLoader:ExternalAssetLoader;
+	
 	// Music and sfx
 	private var music:Sound;
 	private var musicChannel:SoundChannel;
@@ -48,13 +50,30 @@ class Game extends Sprite {
 		testText.fontSet = 4;
 		addChild(textManager.typeText(testText));
 		
-		var externalAsset:ExternalAsset = new ExternalAsset();
-		externalAsset.load("http://sites.google.com/site/tyrannotorus/bruce_lee_v1.zip");// ../../../assets/zips / bruce_lee_v1.zip");
+		externalAssetLoader = new ExternalAssetLoader();
+		externalAssetLoader.addEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset, false, 0, true);
+		externalAssetLoader.load("http://sites.google.com/site/tyrannotorus/darthvader_haxe.zip", ["spritesheet.png", "logic.txt"]);
 				
 		musicTransform = new SoundTransform(0.1);
 		music = Assets.getSound("audio/title_music.mp3", true);
 		musicChannel = music.play();
 		musicChannel.soundTransform = musicTransform;
+	}
+	
+	/**
+	 * External Asset has been loaded and extracted from the zip. Parse it.
+	 * @param {DataEvent.LOAD_COMPLETE}	e
+	 */
+	private function parseExternalAsset(e:DataEvent):Void {
+		externalAssetLoader.removeEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset);
+		var spritesheet:Bitmap = Reflect.field(e.data, "spritesheet.png");
+		var logic:String = Reflect.field(e.data, "logic.txt");
+		var character:Dynamic = Utils.parseCharacterData(spritesheet.bitmapData, logic);
+		fields = Reflect.fields(Reflect.field(character, "actions"));
+		trace(fields);
+		addChild(new Bitmap(character.actions.KNOCKDOWN.bitmap[0]));
+		
+	
 	}
 	
 }

@@ -59,13 +59,12 @@ class TextManager {
 		var point:Point = new Point(0, 0);
 		var position_x:Int = 0;
 		var fontHeight:Int = fontBmd.height;
-		fontBmd.threshold(fontBmd, fontBmd.rect, point, "==", Constants.COLOR_MAGENTA, Constants.COLOR_TRANSPARENT);
+		fontBmd.threshold(fontBmd, fontBmd.rect, point, "==", Constants.COLOR_MAGENTA);
 		glyphBmds[fontSet] = [];
 		glyphRects[fontSet] = [];
 								
 		// Copy every glyph in the font string to bitmapDatas
 		for (idxGlyph in 0...ALPHABET.length) {
-			trace("constructing " + ALPHABET.charAt(idxGlyph));
 			for (fontWidth in 0...fontBmd.width) {
 				if (fontBmd.getPixel((position_x + fontWidth), 0) == 16777215) {	
 					var rect:Rectangle = new Rectangle(position_x, 0, fontWidth, fontHeight);
@@ -134,8 +133,7 @@ class TextManager {
 								
 		// Write full lines of Text to empty bitmapdata
 		var point:Point = new Point();
-		for (i in 0...textArrayLength)
-		{
+		for (i in 0...textArrayLength) {
 			var subTextArrayLength:Int = textArray[i].length;
 			point.x = matteMarginX;
 			point.y = Std.int(i * glyphBmds[fontSet][0].height);
@@ -203,7 +201,6 @@ class TextManager {
 				}
 				var glyph:Bitmap = new Bitmap(glyphBmds[fontSet][idxChar]);
 				rect = glyph.bitmapData.rect;
-				trace("fontColor1 " + fontColor1);
 				glyph.bitmapData.threshold(glyph.bitmapData, rect, thresholdPoint, "==", Constants.COLOR_BLACK, fontColor1);
 				glyph.x = positionPoint.x;
 				glyph.y = positionPoint.y;
