@@ -15,7 +15,7 @@ class Game extends Sprite {
 		
 	private var ring:Ring;
 	private var player:Player;
-	private var opponent:Opponent;
+	private var opponent:Actor;
 	private var healthBars:HealthBars;
 	private var menu:Menu;
 	
@@ -38,7 +38,6 @@ class Game extends Sprite {
 		addChild(ring);
 				
 		player = new Player();
-		opponent = new Opponent();
 		healthBars = new HealthBars();
 		textManager = new TextManager();
 		menu = new Menu(this);
@@ -52,7 +51,7 @@ class Game extends Sprite {
 		
 		externalAssetLoader = new ExternalAssetLoader();
 		externalAssetLoader.addEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset, false, 0, true);
-		externalAssetLoader.load("http://sites.google.com/site/tyrannotorus/darthvader_haxe.zip", ["spritesheet.png", "logic.txt"]);
+		externalAssetLoader.load("http://sites.google.com/site/tyrannotorus/01-glassjoe.zip", ["spritesheet.png", "logic.txt"]);
 				
 		musicTransform = new SoundTransform(0.1);
 		music = Assets.getSound("audio/title_music.mp3", true);
@@ -68,12 +67,22 @@ class Game extends Sprite {
 		externalAssetLoader.removeEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset);
 		var spritesheet:Bitmap = Reflect.field(e.data, "spritesheet.png");
 		var logic:String = Reflect.field(e.data, "logic.txt");
-		var character:Dynamic = Utils.parseCharacterData(spritesheet.bitmapData, logic);
-		fields = Reflect.fields(Reflect.field(character, "actions"));
+		var characterData:Dynamic = Utils.parseCharacterData(spritesheet.bitmapData, logic);
+		var fields:Array<String> = Reflect.fields(Reflect.field(characterData, "actions"));
 		trace(fields);
-		addChild(new Bitmap(character.actions.KNOCKDOWN.bitmap[0]));
+		//addChild(new Bitmap(characterData.actions.KNOCKDOWN.bitmap[0]));
 		
-	
+		opponent = new Actor(characterData);
+		Utils.center(opponent);
+		addChild(opponent);
+		
+		addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	}
+	
+	private function onEnterFrame(e:Event):Void {
+		opponent.animate();
+	}
+	
+	
 	
 }

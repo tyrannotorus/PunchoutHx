@@ -4,24 +4,24 @@ import format.swf.Data.Sound;
 import openfl.display.DisplayObject;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
-import motion.Actuate;
 import openfl.geom.Point;
+import motion.Actuate;
 
 class Utils {
 	
-	public static function centerX(displayObject:Dynamic, maxWidth:Int = -1):Int {
-		var w:Int = maxWidth < 0 ? Constants.fullWidth : maxWidth;
-		return Std.int((w - displayObject.width) * 0.5);
+	public static function centerX(displayObject:Dynamic):Int {
+		var bounds:Rectangle = displayObject.getBounds(displayObject);
+		return Std.int((Constants.GAME_WIDTH - bounds.width) * 0.5 - bounds.width * 0.5);
 	}
 	
-	public static function centerY(displayObject:Dynamic, maxHeight:Int = -1):Int {
-		var h:Int = maxHeight < 0 ? Constants.fullHeight : maxHeight;
-		return Std.int((h - displayObject.height) * 0.5);
+	public static function centerY(displayObject:Dynamic):Int {
+		var bounds:Rectangle = displayObject.getBounds(displayObject);
+		return Std.int((Constants.GAME_HEIGHT - bounds.height) * 0.5 - bounds.height * 0.5);
 	}
 	
-	public static function center(displayObject:Dynamic, maxWidth:Int = -1, maxHeight:Int = -1):Void {
-		displayObject.x = centerX(displayObject, maxWidth);
-		displayObject.y = centerY(displayObject, maxHeight);
+	public static function center(displayObject:Dynamic):Void {
+		displayObject.x = centerX(displayObject);
+		displayObject.y = centerY(displayObject);
 	}
 	
 	/**
@@ -52,16 +52,13 @@ class Utils {
 				
 		var character:Dynamic = { };
 		var stats:Dynamic = { };
-		var frameCoordinates:Dynamic = { };
-		
 		var actions:Dynamic = { };
-		var actionData:Dynamic = null;
 		var combos:Dynamic = { };
-		var comboData:Dynamic = null;
-		
+						
 		var tempString:String;
 		var frameProperties:Array<String>;
 		var frameProperty:Array<String>;
+		var frameCoordinates:Dynamic = { };
 		var actionType:String = "";
 		
 		for (i in 0...logic.length) {
@@ -120,7 +117,7 @@ class Utils {
 		for (key in Reflect.fields(actions)) {
 			var actionData:Dynamic = Reflect.field(actions, key);
 			var point:Point = Reflect.field(frameCoordinates, key);
-			Reflect.setField(actionData, "bitmap", new Array<BitmapData>());
+			Reflect.setField(actionData, "bitmaps", new Array<BitmapData>());
 			
 			var len:Int = Reflect.field(actionData, "timing").length;
 			for(i in 0...len) {
@@ -130,7 +127,8 @@ class Utils {
 				var cell:BitmapData = new BitmapData(cellWidth, cellHeight, true);
 				cell.copyPixels(source, rect, zeroPoint);
 				cell.threshold(cell, cell.rect, zeroPoint, "==", Constants.COLOR_MAGENTA);
-				Reflect.field(actionData, "bitmap")[i] = cell;
+				Reflect.field(actionData, "bitmaps")[i] = cell;
+				trace(key + " writing bitmaps " + i);			
 			}
 		}
 		
