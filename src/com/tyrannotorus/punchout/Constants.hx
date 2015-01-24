@@ -34,11 +34,11 @@ class Constants {
 	public static inline var FADE_TO_BLACK:Int = 23;
 	
 	/* Colours */
-	public static inline var COLOR_TRANSPARENT:UInt = 0x00000000;
-	public static inline var COLOR_MAGENTA:UInt = 0xFFFF00FF;
-	public static inline var COLOR_WHITE:UInt = 0xFFFFFFFF;
-	public static inline var COLOR_BLACK:UInt = 0xFF000000;
-	public static inline var COLOR_YELLOW:UInt = 0xFFFFFF00;
+	public static var COLOR_TRANSPARENT:UInt = 0x00000000;
+	public static var COLOR_MAGENTA:UInt = 0xFFFF00FF;
+	public static var COLOR_WHITE:UInt = 0xFFFFFFFF;
+	public static var COLOR_BLACK:UInt = 0xFF000000;
+	public static var COLOR_YELLOW:UInt = 0xFFFFFF00;
 			
 	public static var colors:Array<UInt> = [0xFFFF7400, 0xFF008C00, 0xFF006E2E, 0xFF4096EE, 0xFFFF0084, 0xFFB02B2C, 0xFFD15600, 0xFFC79810, 0xFF73880A, 0xFF6BBA70, 0xFF3F4C6B, 0xFF356AA0, 0xFFD01F3C, 0xFFCDEB8B, 0xFF36393D, 0xFF0063DC];
 	public static var fullWidth(default,set):Int;
