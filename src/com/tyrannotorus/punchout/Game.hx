@@ -13,8 +13,9 @@ import openfl.media.SoundTransform;
 
 class Game extends Sprite {
 		
+	private var screen:Sprite;
 	private var ring:Ring;
-	private var player:Player;
+	private var player:Actor;
 	private var opponent:Actor;
 	private var healthBars:HealthBars;
 	private var menu:Menu;
@@ -33,11 +34,23 @@ class Game extends Sprite {
 		
 		super();
 		
+		screen = new Sprite();
+		
+		// Add Mike Tyson Welcome Screen
+		var intro:Bitmap = new Bitmap();
+		intro.bitmapData = Assets.getBitmapData("img/intro.png");
+		screen.addChild(intro);
+		addChild(screen);
+		
 		ring = new Ring();
-		ring.loadRing("img/ring-01.png");
 		addChild(ring);
-				
-		player = new Player();
+		
+		// Create Little Mac
+		var macSpritesheet:BitmapData = Assets.getBitmapData("actors/mac_spritesheet.png");
+		var macLogic:String = Assets.getText("actors/mac_logic.txt");
+		var macData:Dynamic = Utils.parseCharacterData(macSpritesheet, macLogic);
+		player = new Actor(macData);
+		
 		healthBars = new HealthBars();
 		textManager = new TextManager();
 		menu = new Menu(this);
@@ -65,21 +78,26 @@ class Game extends Sprite {
 	 */
 	private function parseExternalAsset(e:DataEvent):Void {
 		externalAssetLoader.removeEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset);
+		
 		var spritesheet:Bitmap = Reflect.field(e.data, "spritesheet.png");
 		var logic:String = Reflect.field(e.data, "logic.txt");
 		var characterData:Dynamic = Utils.parseCharacterData(spritesheet.bitmapData, logic);
-		var fields:Array<String> = Reflect.fields(Reflect.field(characterData, "actions"));
-		trace(fields);
-		//addChild(new Bitmap(characterData.actions.KNOCKDOWN.bitmap[0]));
-		
 		opponent = new Actor(characterData);
-		Utils.center(opponent);
+		Utils.position(opponent, Constants.CENTER, 73);
 		addChild(opponent);
+		
+		ring.loadRing(characterData);
+		
+		
+		
+		Utils.position(player, Constants.CENTER, 135);
+		addChild(player);
 		
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	}
 	
 	private function onEnterFrame(e:Event):Void {
+		player.animate();
 		opponent.animate();
 	}
 	

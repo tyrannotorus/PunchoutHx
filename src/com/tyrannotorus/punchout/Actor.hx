@@ -127,7 +127,7 @@ class Actor extends Sprite {
 	//private var BB			:Int = B*B;	// ELLIPSE VARIABLES
 		
 	// Actor Stats
-	public  var actorname	:String;
+	public  var actorName	:String;
 	public  var health		:Int;
 	public  var stamina		:Int;
 	public  var recovery	:Int;
@@ -233,13 +233,14 @@ class Actor extends Sprite {
 			return;
 		}
 		
+		var statsData:Dynamic = Reflect.field(actorData, "stats");
+		actorName = Reflect.field(statsData, "NAME");
+		
 		addChild(actor = new Bitmap());
+		actor.bitmapData = bitmaps[0][0];
 		cacheAsBitmap = true;
 	}
-		
-		
-		
-		
+	
 		//sfx	= new Array<Array<Sound>>(i, true);
 		
 		/*
@@ -348,7 +349,7 @@ class Actor extends Sprite {
 				{
 					healthdisplay = $healthdisplay;
 					healthbar = new HealthBar( healthdisplay, faction );
-					healthbar.renew( health, actorname, faction );
+					healthbar.renew( health, actorName, faction );
 					healthbar.num = healthdisplay.addBar( healthbar, faction );
 				}
 				
@@ -380,7 +381,7 @@ class Actor extends Sprite {
 			// RENDERING AN ACTUAL IN-GAME VALUE RANGE IS 0 TO 4 (+ MAGNITUDE);
 			if( $attackpower ) {
 				var power:Int = (attackpower += $attackpower) * 0.2;
-				trace(actorname + " attackpower is " + attackpower + " (" + power + ")");
+				trace(actorName + " attackpower is " + attackpower + " (" + power + ")");
 				i = hitangle.length;
 				while(i--) {
 					ii = hitangle[i].length;
@@ -429,7 +430,7 @@ class Actor extends Sprite {
 					x += vx;
 					y += vz;
 					actor.y += vy++;
-					if( actor.y > 300 ) {altitude = elevation; trace(actorname + " fell to his death"); }//resetActor();  }
+					if( actor.y > 300 ) {altitude = elevation; trace(actorName + " fell to his death"); }//resetActor();  }
 				} else {
 					deathBlink();
 				}
@@ -461,7 +462,7 @@ class Actor extends Sprite {
 							target_z = target.y - old_z;
 							target_r = Math.sqrt(target_x*target_x + target_z*target_z);
 														
-							trace("targeting: " +target.actorname);		
+							trace("targeting: " +target.actorName);		
 						} else {
 							target_r = 0;
 						}
@@ -621,7 +622,7 @@ class Actor extends Sprite {
 			// Collision test for melee strike ...
 			if( melee )
 			{
-				//trace(actorname + " attacking");
+				//trace(actorName + " attacking");
 				
 				// Firing projectile
 				if( melee==255 ) {
@@ -724,7 +725,7 @@ class Actor extends Sprite {
 					y = new_z;
 					z_axis = new_z - 1;//+ elevation;
 					//actor.y = -elevation - h + 3;
-					if( actor.y > 300 ) {altitude = NaN; trace(actorname + " fell to his death"); }//resetActor();  
+					if( actor.y > 300 ) {altitude = NaN; trace(actorName + " fell to his death"); }//resetActor();  
 					return;
 				
 				// Character stepped onto bottomless pit, will now fall to his death
@@ -742,7 +743,7 @@ class Actor extends Sprite {
 				
 				// Character has been beaten to death
 				} else if( health <= 0 ) {
-					//if (actorname=="DARTH VADER") sfxchannel = sfx.dead.play(50, 0, sfxtransform);
+					//if (actorName=="DARTH VADER") sfxchannel = sfx.dead.play(50, 0, sfxtransform);
 					healthbar.adjust( health = 0, true );
 					forceAnimation( a==KNOCKUP?DEADUP:DEADDOWN, DEAD );// : forceAnimation( DEADDOWN, DEAD );
 				
@@ -1315,10 +1316,10 @@ class Actor extends Sprite {
 						
 			// Reset healthbar with random name and amount of health
 			if( faction==2 ) {
-				healthbar.renew( health = Int(Math.random()*14)+4, actorname, faction );
+				healthbar.renew( health = Int(Math.random()*14)+4, actorName, faction );
 				healthbar.visible = false;
 			} else {
-				healthbar.renew( health, actorname, faction );
+				healthbar.renew( health, actorName, faction );
 				healthbar.visible = true;
 			}
 			
@@ -1342,7 +1343,7 @@ class Actor extends Sprite {
 		private function regenStats():void
 		{
 			// Reset Stats...
-			actorname	= stats.NAME is Array ? stats.NAME[Int(Math.random()*stats.NAME.length)] : stats.NAME;
+			actorName	= stats.NAME is Array ? stats.NAME[Int(Math.random()*stats.NAME.length)] : stats.NAME;
 			health		= stats.HEALTH;
 			stamina 	= 3;
 			walkspeed	= stats.WALKSPEED;
@@ -1353,7 +1354,7 @@ class Actor extends Sprite {
 			willpower	= 0;
 			recovery	= 0;
 			
-			trace(actorname + " JUMP: "+ JUMP);
+			trace(actorName + " JUMP: "+ JUMP);
 			
 			// Adjust jump frames according to jumppower
 			if( JUMP )

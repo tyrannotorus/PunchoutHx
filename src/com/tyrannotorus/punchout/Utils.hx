@@ -1,5 +1,6 @@
 package com.tyrannotorus.punchout;
 
+import openfl.display.DisplayObject;
 import format.swf.Data.Sound;
 import openfl.display.DisplayObject;
 import openfl.display.BitmapData;
@@ -9,19 +10,31 @@ import motion.Actuate;
 
 class Utils {
 	
-	public static function centerX(displayObject:Dynamic):Int {
-		var bounds:Rectangle = displayObject.getBounds(displayObject);
-		return Std.int((Constants.GAME_WIDTH - bounds.width) * 0.5 - bounds.width * 0.5);
+	public static function centerX(displayObject:DisplayObject):Int {
+		var bounds:Rectangle = displayObject.getRect(displayObject);
+		return Std.int((Constants.GAME_WIDTH - bounds.width) * 0.5);
 	}
 	
-	public static function centerY(displayObject:Dynamic):Int {
-		var bounds:Rectangle = displayObject.getBounds(displayObject);
-		return Std.int((Constants.GAME_HEIGHT - bounds.height) * 0.5 - bounds.height * 0.5);
+	public static function centerY(displayObject:DisplayObject):Int {
+		var rect:Rectangle = displayObject.getRect(displayObject);
+		return Std.int((Constants.GAME_HEIGHT - rect.height) * 0.5);
 	}
 	
-	public static function center(displayObject:Dynamic):Void {
-		displayObject.x = centerX(displayObject);
-		displayObject.y = centerY(displayObject);
+	public static function position(displayObject:DisplayObject, x:Dynamic = null, y:Dynamic = null):Void {
+		
+		var rect:Rectangle = displayObject.getRect(displayObject);
+		
+		if (x == Constants.CENTER) {
+			displayObject.x = Std.int((Constants.GAME_WIDTH - rect.width) * 0.5);
+		} else if (Std.is(x, Int)) {
+			displayObject.x = x;
+		}
+		
+		if (y == Constants.CENTER) {
+			displayObject.y = Std.int((Constants.GAME_HEIGHT - rect.height) * 0.5);
+		} else if (Std.is(x, Int)) {
+			displayObject.y = y;
+		}
 	}
 	
 	/**
@@ -93,7 +106,7 @@ class Utils {
 		// Find width of animation cell
 		var cellWidth:Int = source.width;
 		for (i in 0...cellWidth) {
-			if (source.getPixel32(i, 0) != Constants.COLOR_MAGENTA) {
+			if (Std.int(source.getPixel32(i, 0)) != Constants.COLOR_MAGENTA) {
 				cellWidth = i;
 				break;
 			}
@@ -102,7 +115,7 @@ class Utils {
 		// Find height of animation cell
 		var cellHeight:Int = source.height;
 		for (i in 0...cellHeight) {
-			if (source.getPixel32(0, i) != Constants.COLOR_MAGENTA) {
+			if (Std.int(source.getPixel32(0, i)) != Constants.COLOR_MAGENTA) {
 				cellHeight = i;
 				break;
 			}
@@ -128,7 +141,6 @@ class Utils {
 				cell.copyPixels(source, rect, zeroPoint);
 				cell.threshold(cell, cell.rect, zeroPoint, "==", Constants.COLOR_MAGENTA);
 				Reflect.field(actionData, "bitmaps")[i] = cell;
-				trace(key + " writing bitmaps " + i);			
 			}
 		}
 		
@@ -206,19 +218,20 @@ class Utils {
 	private static function removeNulls(element:String):Bool {
     	return (element != "");
 	}
-																										
+
 	private static function removeComments(element:String):String {
     	return element.split(";")[0];
 	}
 		
-	private static function removeWhiteSpace(element:String):String {						//
+	private static function removeWhiteSpace(element:String):String {
+		var base:String = "0123456789abcdefghijklmnopqrstuvwxyz";
 		var string:String;
-		var array1:Array<String> = element.split("\t").join("").split(",");									//
+		var array1:Array<String> = element.split("\t").join("").split(",");
 		for (i in 0...array1.length) {
 			var array2:Array<String> = array1[i].split("\"");
 			string = "";
-			for(j in 0...array2.length) {														//
-				(j==1) ? string += array2[j] : string += array2[j].split(" ").join("");					//
+			for(j in 0...array2.length) {
+				(j==1) ? string += array2[j] : string += array2[j].split(" ").join("");
 			}
 			array1[i] = string;
 		}
@@ -226,5 +239,68 @@ class Utils {
 		return string;
     }
 	
+	/**
+	* Parses hex string to equivalent integer, with safety checks
+	* From:  haxe-flx-ui/flixel/addons/ui/U.hx
+	* @param {String} str - In format 0xRRGGBB or 0xAARRGGBB
+	* @return {Int}
+	*/
+	public static inline function parseHex(str:String, cast32Bit:Bool=false):Int {
+		if (str.indexOf("0x") != 0) { //if it doesn't start with "0x"
+			throw "U.parseHex() string(" + str + ") does not start with \"0x\"!";
+		}
+		if (str.length != 8 && str.length != 10) {
+			throw "U.parseHex() string(" + str + ") must be 8(0xRRGGBB) or 10(0xAARRGGBB) characters long!";
+		}	
+		str = str.substr(2, str.length - 2); //chop off the "0x"
+		if (cast32Bit && str.length == 6) { //add an alpha channel if none is given and we're casting
+			str = "FF" + str;
+		}
+		return hex2dec(str);
+	}
+
+	/**
+	* Parses hex string to equivalent integer
+	* From:  haxe-flx-ui/flixel/addons/ui/U.hx
+	* @param hex_str string in format RRGGBB or AARRGGBB (no "0x")
+	* @return integer value
+	*/
+	private static inline function hex2dec(hex_str:String):Int {
+		var length:Int = hex_str.length;
+		var place_mult:Int = 1;
+		var sum:Int = 0;
+		var i:Int = length - 1;
+		while (i >= 0) {
+			var char_hex:String = hex_str.substr(i, 1);
+			var char_int:Int = hexChar2dec(char_hex);
+			sum += char_int * place_mult;
+			place_mult *= 16;
+			i--;
+		}
+		return sum;
+	}
+
+	/**
+	* Parses an individual hexadecimal string character to the equivalent decimal integer value
+	* From:  haxe-flx-ui/flixel/addons/ui/U.hx
+	* @param hex_char hexadecimal character (1-length string)
+	* @return decimal value of hex_char
+	*/
+	public static inline function hexChar2dec(hex_char:String):Int {
+		var val:Int = -1;
+		switch(hex_char) {
+			case "0","1","2","3","4","5","6","7","8","9","10":val = Std.parseInt(hex_char);
+			case "A","a": val = 10;
+			case "B", "b": val = 11;
+			case "C", "c": val = 12;
+			case "D", "d": val = 13;
+			case "E", "e": val = 14;
+			case "F", "f": val = 15;
+		}
+		if(val == -1){
+			throw "U.hexChar2dec() illegal char(" + hex_char + ")";
+		}
+		return val;
+	}
 	
 }
