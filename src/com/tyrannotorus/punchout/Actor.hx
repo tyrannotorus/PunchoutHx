@@ -14,6 +14,7 @@ class Actor extends Sprite {
 		
 	public var IDLE			:Int = 0;
 	public var WALK			:Int;
+	public var PUNCH1		:Int;
 	public var WALKUP		:Int;
 	public var HOP			:Int;
 	public var FALL			:Int;
@@ -60,7 +61,7 @@ class Actor extends Sprite {
 		// Attack combos
 	public  var grappling		:Bool;	// To prevent movement during grapple
 	private var joystick		:Int;
-	private var combochain		:Int;
+	private var comboChain		:Int;
 	private var combos			:Array<Dynamic>;
 	private var comboarchive	:Array<Dynamic>;
 	private var strikecombos	:Array<Dynamic>;	// COULD BE REPLACED BY JUST STATS.
@@ -805,7 +806,7 @@ class Actor extends Sprite {
 			// REDUCE HEALTH
 			stamina -= $sp;
 			health -= $hp;
-			combochain = 0;
+			comboChain = 0;
 			
 			// REDUCE HEALTH BAR
 			healthbar.adjust( health < 1 ? health = 0 : health );
@@ -845,7 +846,7 @@ class Actor extends Sprite {
 			// Reduce health and stamina
 			stamina -= $sp;
 			health -= $hp;
-			combochain = 0;
+			comboChain = 0;
 			
 			// Update healthbar
 			healthbar.adjust( health < 1 ? health = 0 : health );
@@ -884,21 +885,27 @@ class Actor extends Sprite {
 		}
 		
 		
-				
-		// CHANGE ANIMATION
-		private function forceAnimation ($a:Int = IDLE, $_a:Int = IDLE, $now:Bool = false):void
-		{
-			// New animation request
-			if( a!=$a )
-			{
-				//trace("forcing new Animation, reseting tick, a:" + a + ", $a:"+$a);
+		*/
+		
+		/**
+		 * Force a change in the animation
+		 * @param {Int} newAni - The new animation
+		 * @param {Int} nextAni - Animation that follows the new animation
+		 * @param {Bool} now - force the bitmapData to change this frame
+		 */
+		private function forceAnimation(newAni:Int = 0, nextAni:Int = 0, now:Bool = false):Void {
+			if(a != newAni) {
 				f = tick = 0;	// Reset frame time
-				a = $a;			// Set new animation
-				_a = $_a;
-				if( $now ) actor.bitmapData = bitmaps[a][f];
-				combochain == 3 ? combochain = 2 : combochain = 0
+				a = newAni;		// Set new animation
+				_a = nextAni;
+				if (now == true) {
+					actor.bitmapData = bitmaps[a][f];
+				}
+				comboChain = (comboChain == 3) ? 2 : 0;
 			}
 		}
+		
+		/*
 		
 		
 		// Simple Animating Preview functions if Character is part of Online Database
@@ -990,7 +997,7 @@ class Actor extends Sprite {
 						tick = dead = 80;
 					
 					} else {
-						combochain = (combochain == 3) ? 2 : 0;
+						comboChain = (comboChain == 3) ? 2 : 0;
 						f = 0;
 						a = _a;
 						
@@ -1120,19 +1127,29 @@ class Actor extends Sprite {
 			//case JUMPKICK:  zMove (zspeed,JUMPKICK);	break;
 			}
 		}
+		*/
 		
-		public function punchKey():void
-		{
-			if( combochain == 2 ) {
+		/**
+		 * Punch key was pressed
+		 */
+		public function punchKey():Void {
+			trace("actor.punchKey()");
+			if (a != PUNCH1) {
+				forceAnimation(PUNCH1, IDLE);
+			}
+			
+			
+			/*
+			if( comboChain == 2 ) {
 				// CAN ONLY REPEAT STRIKING COMBOS INFINITELY, HALT ALL OTHERS IF COMBO SUCCESSOR NOT FOUND
-				combochain = 3;
+				comboChain = 3;
 				combos[ joystick ] ? combos = combos[joystick] : combos[1] ? combos = combos[1] : comboarchive[joystick] ? combos = comboarchive[joystick] : combos = comboarchive[1];
 				_a = combos[0];
 				if( victim ) victim._a = _a + 5; // DEPRECIATED!!!!!
 				//trace("STAMINA " + victim.stamina);
 				//if (victim) trace("VICTIM" + victim.elevation);
 					
-			} else if( combochain == 0 ) {
+			} else if( comboChain == 0 ) {
 				
 				switch( a ) {
 					case IDLE:
@@ -1142,7 +1159,7 @@ class Actor extends Sprite {
 						if( strikecombos.length ) {
 							combos = comboarchive = strikecombos;
 							comboarchive[joystick] ? combos = comboarchive[joystick] : combos = comboarchive[1];
-							combochain = 3;
+							comboChain = 3;
 							forceAnimation(combos[0], IDLE);
 						} break;
 						
@@ -1151,7 +1168,7 @@ class Actor extends Sprite {
 						if( grapplecombos.length ) {
 							combos = comboarchive = grapplecombos;
 							comboarchive[joystick] ? combos = comboarchive[joystick] : combos = comboarchive[1];
-							combochain = 3;
+							comboChain = 3;
 							forceAnimation(combos[0], GRAPPLE);
 							victim.forceAnimation(a + 5, GRAPPLED);
 						} break;
@@ -1161,7 +1178,7 @@ class Actor extends Sprite {
 						if( jumpcombos.length ) {
 							combos = comboarchive = jumpcombos;
 							comboarchive[joystick] ? combos = comboarchive[joystick] : combos = comboarchive[1];
-							combochain = 3;
+							comboChain = 3;
 							forceAnimation(combos[0], FALL);
 						} break;
 						
@@ -1170,14 +1187,14 @@ class Actor extends Sprite {
 						if( crouchcombos.length ) {
 							combos = comboarchive = crouchcombos;
 							comboarchive[joystick] ? combos = comboarchive[joystick] : combos = comboarchive[1];
-							combochain = 2;
+							comboChain = 2;
 							_a = combos[0];
 						} break;
 				}
 			}
-				
+			*/	
 		}
-		
+		/*
 				
 		public function jumpKey() :void
 		{

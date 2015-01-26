@@ -6,6 +6,7 @@ import openfl.display.Sprite;
 import openfl.display.Bitmap;
 import openfl.display.StageDisplayState;
 import openfl.events.Event;
+import openfl.events.KeyboardEvent;
 import openfl.Lib;
 import openfl.media.Sound;
 import openfl.media.SoundChannel;
@@ -20,6 +21,15 @@ class Game extends Sprite {
 	private var healthBars:HealthBars;
 	private var menu:Menu;
 	
+	// Keyboard Controls
+	private var zKey:Bool = false;
+	private var xKey:Bool = false;
+	private var cKey:Bool = false;
+	private var upKey:Bool = false;
+	private var downKey:Bool = false;
+	private var leftKey:Bool = false;
+	private var rightKey:Bool = false;
+		
 	// Fonts and text typing
 	public var textManager:TextManager;
 	
@@ -87,18 +97,81 @@ class Game extends Sprite {
 		addChild(opponent);
 		
 		ring.loadRing(characterData);
-		
-		
-		
+				
 		Utils.position(player, Constants.CENTER, 135);
 		addChild(player);
 		
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		stage.addEventListener(KeyboardEvent.KEY_DOWN, onGameKeyDown);
+		stage.addEventListener(KeyboardEvent.KEY_UP, onGameKeyUp);
 	}
 	
 	private function onEnterFrame(e:Event):Void {
 		player.animate();
 		opponent.animate();
+	}
+	
+	private function onGameKeyDown(e:KeyboardEvent):Void {
+		
+		switch(e.keyCode) {
+			
+			// Left key
+			case 37:
+				if (leftKey == false) {
+					leftKey = true;
+				}
+			
+			// Up key
+			case 38:
+				if (upKey == false) {
+					upKey = true;
+				}
+			
+			// Right Key	
+			case 39:
+				if (rightKey == false) {
+					rightKey = true;
+				}
+			
+			// Down Key
+			case 40:
+				if (downKey == false) {
+					downKey = true;
+				}
+			
+			// X Key
+			case 88:
+				if (xKey == false) {
+					xKey = true;
+				}
+			
+			// Z Key
+			case 90:
+				if (zKey == false) {
+					zKey = true;
+					player.punchKey();
+				}
+		}
+			
+	}
+	
+	private function onGameKeyUp(e:KeyboardEvent):Void {
+				
+		switch(e.keyCode) {
+			case 37:
+				leftKey = false;
+			case 38:
+				upKey = false;
+			case 39:
+				rightKey = false;
+			case 40:
+				downKey = false;
+			case 88:
+				xKey = false;
+			case 90:
+				zKey = false;
+		}
+		
 	}
 	
 	

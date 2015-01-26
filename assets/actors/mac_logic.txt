@@ -22,9 +22,17 @@
 	timing:12
 	timing:5
 	
-	frames.WALK (0,1)
+	frames.WALK (2,0)
 	timing:6
 	timing:6
+	
+	frames.PUNCH1 (0,1)
+	timing:3
+	timing:3
+	timing:3
+	timing:3, xshift:3, yshift:-8
+	timing:3
+	timing:3
 	
 ;	frames.HOP (8,0)
 ;	timing:5
