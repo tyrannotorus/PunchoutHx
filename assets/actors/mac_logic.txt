@@ -7,7 +7,7 @@
 ; ////////////////////////////////////////////////////////////
 
 	stats.NAME		= "Little Mac"
-	stats.HEALTH   		= 16
+	stats.HEALTH   		= 100
 	stats.STRENGTH  	= 1
 	stats.DEFENSE	  	= 1
 	stats.WILLPOWER 	= 1
@@ -19,20 +19,35 @@
 ;	stats.DEATHCRY		= sfx_nooooo.mp3
 
 	frames.IDLE (0,0)
-	timing:12
-	timing:5
-	
+	timing:10000
+		
 	frames.WALK (2,0)
 	timing:6
 	timing:6
 	
-	frames.PUNCH1 (0,1)
-	timing:3
-	timing:3
-	timing:3
-	timing:3, xshift:3, yshift:-8
-	timing:3
-	timing:3
+	frames.HIGH_PUNCH_B (0,1)
+	timing:1, xshift:-2
+	timing:1, xshift:-4, yshift:-4
+	timing:1, xshift:-2, yshift:-12
+	timing:1, xshift:0, yshift:-16
+	timing:1, xshift:3, yshift:-30
+	timing:1, xshift:5, yshift:-30
+	timing:1, xshift:4, yshift:-16
+	timing:1, xshift:0, yshift:-12
+	timing:1, xshift:-4, yshift:-4
+	timing:1, xshift:-1
+	
+	frames.HIGH_PUNCH_A (0,2)
+	timing:1, xshift:-1
+	timing:1, xshift:-3, yshift:-4
+	timing:1, xshift:0, yshift:-12
+	timing:1, xshift:3, yshift:-21
+	timing:1, xshift:8, yshift:-30
+	timing:1, xshift:6, yshift:-30
+	timing:1, xshift:3, yshift:-21
+	timing:1, xshift:0, yshift:-12
+	timing:1, xshift:-3, yshift:-4
+	
 	
 ;	frames.HOP (8,0)
 ;	timing:5

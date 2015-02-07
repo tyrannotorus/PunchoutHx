@@ -98,7 +98,7 @@ class Game extends Sprite {
 		
 		ring.loadRing(characterData);
 				
-		Utils.position(player, Constants.CENTER, 135);
+		Utils.position(player, 96, 132);
 		addChild(player);
 		
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -141,15 +141,24 @@ class Game extends Sprite {
 			
 			// X Key
 			case 88:
-				if (xKey == false) {
+				if (xKey == false && zKey == false) {
 					xKey = true;
+					if (upKey == true) {
+						player.highPunchA();
+					} else {
+						player.lowPunchA();
+					}
 				}
 			
 			// Z Key
 			case 90:
-				if (zKey == false) {
+				if (zKey == false && xKey == false) {
 					zKey = true;
-					player.punchKey();
+					if (upKey == true) {
+						player.highPunchB();
+					} else {
+						player.lowPunchB();
+					}
 				}
 		}
 			

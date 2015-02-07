@@ -10,6 +10,13 @@ import motion.Actuate;
 
 class Utils {
 	
+	private static var pointNW:Point = new Point(0, 0);
+	private static var pointNE:Point = new Point(2, 0);
+	private static var pointSW:Point = new Point(0, 1);
+	private static var pointSE:Point = new Point(2, 1);
+	private static var pointUppercut:Point = new Point(1, 0);
+	private static var pointHit:Point = new Point(1, 1);
+	
 	public static function centerX(displayObject:DisplayObject):Int {
 		var bounds:Rectangle = displayObject.getRect(displayObject);
 		return Std.int((Constants.GAME_WIDTH - bounds.width) * 0.5);
@@ -20,19 +27,25 @@ class Utils {
 		return Std.int((Constants.GAME_HEIGHT - rect.height) * 0.5);
 	}
 	
+	/**
+	 * Positions a display object on the screen
+	 * @param {DisplayObject} displayObject
+	 * @param {Dynamic} x
+	 * @param {Dynamic} y
+	 */
 	public static function position(displayObject:DisplayObject, x:Dynamic = null, y:Dynamic = null):Void {
 		
 		var rect:Rectangle = displayObject.getRect(displayObject);
 		
 		if (x == Constants.CENTER) {
 			displayObject.x = Std.int((Constants.GAME_WIDTH - rect.width) * 0.5);
-		} else if (Std.is(x, Int)) {
+		} else if (Std.is(x, Float)) {
 			displayObject.x = x;
 		}
 		
 		if (y == Constants.CENTER) {
 			displayObject.y = Std.int((Constants.GAME_HEIGHT - rect.height) * 0.5);
-		} else if (Std.is(x, Int)) {
+		} else if (Std.is(x, Float)) {
 			displayObject.y = y;
 		}
 	}
@@ -103,36 +116,36 @@ class Utils {
 			}
 		}
 		
-		// Find width of animation cell
+		// Calculate width of animation cells by locating cyan divider 
 		var cellWidth:Int = source.width;
 		for (i in 0...cellWidth) {
-			if (Std.int(source.getPixel32(i, 0)) != Constants.COLOR_MAGENTA) {
+			if (Std.int(source.getPixel32(i, 0)) == Constants.COLOR_CYAN) {
 				cellWidth = i;
 				break;
 			}
 		}
 		
-		// Find height of animation cell
+		// Calculate height of animation cells by locating cyan divider 
 		var cellHeight:Int = source.height;
 		for (i in 0...cellHeight) {
-			if (Std.int(source.getPixel32(0, i)) != Constants.COLOR_MAGENTA) {
+			if (Std.int(source.getPixel32(0, i)) == Constants.COLOR_CYAN) {
 				cellHeight = i;
 				break;
 			}
-		}		
+		}
 		
-		// Create new spritesheet of source with alpha channel
 		var rect:Rectangle = source.rect;
 		var zeroPoint:Point = new Point(0, 0);
-				
+		
 		// Copy and Fill animation cells
 		var fields:Array<Dynamic> = Reflect.fields(actions);
+		trace(fields.length);
 		for (key in Reflect.fields(actions)) {
 			var actionData:Dynamic = Reflect.field(actions, key);
 			var point:Point = Reflect.field(frameCoordinates, key);
 			Reflect.setField(actionData, "bitmaps", new Array<BitmapData>());
-			
 			var len:Int = Reflect.field(actionData, "timing").length;
+			trace(key + " " + len);
 			for(i in 0...len) {
 				var posX:Int = Std.int(point.x * cellWidth + point.x + i * (cellWidth + 1));
 				var posY:Int = Std.int(point.y * cellHeight + point.y);
@@ -145,7 +158,7 @@ class Utils {
 		}
 		
 		source.dispose();
-			
+		
 		Reflect.setField(character, "stats", stats);
 		Reflect.setField(character, "actions", actions);
 		Reflect.setField(character, "combos", combos);
@@ -165,13 +178,12 @@ class Utils {
 		var actionData:Dynamic = { };
 		Reflect.setField(actionData, "sfx", new Array<Sound>());
 		Reflect.setField(actionData, "timing", new Array<Int>());
+		Reflect.setField(actionData, "blockHigh", new Array<Int>());
+		Reflect.setField(actionData, "blockLow", new Array<Int>());
+		Reflect.setField(actionData, "dodge", new Array<Int>());
+		Reflect.setField(actionData, "uppercut", new Array<Int>());
 		Reflect.setField(actionData, "hit", new Array<Int>());
-		Reflect.setField(actionData, "hitpow", new Array<Int>());
-		Reflect.setField(actionData, "hitangle", new Array<Int>());
-		Reflect.setField(actionData, "hitvx", new Array<Int>());
-		Reflect.setField(actionData, "hitvy", new Array<Int>());
 		Reflect.setField(actionData, "hithp", new Array<Int>());
-		Reflect.setField(actionData, "hitsp", new Array<Int>());
 		Reflect.setField(actionData, "xshift", new Array<Int>());
 		Reflect.setField(actionData, "yshift", new Array<Int>());
 		Reflect.setField(actionData, "xshove", new Array<Int>());

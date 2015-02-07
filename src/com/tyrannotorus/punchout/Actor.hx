@@ -1,6 +1,5 @@
 ﻿package com.tyrannotorus.punchout;
 	
-	//import code.Ombre;
 	import openfl.display.Sprite;
 	import openfl.display.Bitmap;
 	import openfl.display.BitmapData;
@@ -14,51 +13,15 @@ class Actor extends Sprite {
 		
 	public var IDLE			:Int = 0;
 	public var WALK			:Int;
-	public var PUNCH1		:Int;
-	public var WALKUP		:Int;
-	public var HOP			:Int;
-	public var FALL			:Int;
-	public var CROUCH		:Int;
-	public var JUMP			:Int;
-	public var JUMPATTACK0	:Int;	
-	public var RUN			:Int;
-	public var RUNATTACK0	:Int;
-	public var ATTACK0		:Int;
-	public var ATTACK1		:Int;
-	public var ATTACK2		:Int;
-	public var ATTACK3		:Int;
-	public var ATTACK4		:Int;
-	public var ATTACK5		:Int;
-	public var ATTACK6		:Int;
-	public var ATTACK7		:Int;
-	public var ATTACK8		:Int;
-	public var ATTACK9		:Int;
-	public var FACEHIT1		:Int;
-	public var FACEHIT2		:Int;
-	public var KNOCKUP		:Int;
-	public var DEADUP		:Int;
+	public var HIGH_PUNCH_B	:Int;
+	public var HIGH_PUNCH_A	:Int;
+	public var LOW_PUNCH_B	:Int;
+	public var LOW_PUNCH_A	:Int;
 	public var RISEUP		:Int;
-	public var BACKHIT1		:Int;
-	public var BACKHIT2		:Int;		
-	public var KNOCKDOWN	:Int;
-	public var DEADDOWN		:Int = 22;
-	public var RISEDOWN		:Int;
+	public var KNOCKDOWN	:Int = 99;
 	public var STUN			:Int;
-	public var GRAB			:Int;
-	public var GRAPPLE		:Int;
-	public var GRAPPLE_F 	:Int;
-	public var GRAPPLE_B 	:Int;
-	public var GRAPPLE_U 	:Int;
-	public var GRAPPLE_D 	:Int;
-	public var GRABBED		:Int;
-	public var GRAPPLED		:Int;
-	public var GRAPPLDE_F 	:Int;
-	public var GRAPPLED_B 	:Int;
-	public var GRAPPLED_U 	:Int;
-	public var GRAPPLED_D 	:Int;
-	public var DEAD			:Int = 99;
-					
-		// Attack combos
+						
+	// Attack combos
 	public  var grappling		:Bool;	// To prevent movement during grapple
 	private var joystick		:Int;
 	private var comboChain		:Int;
@@ -73,18 +36,15 @@ class Actor extends Sprite {
 	private var originals	:Array<Array<BitmapData>>;
 	private var palette		:Array<Array<UInt>>;
 	private var frames		:Array<Array<Int>>; 		// Frame timings
-	private var hit			:Array<Array<Int>>;			// Hit frames
-	private var hitpow		:Array<Array<Int>>;			// Hit magnitude/power
-	private var hitangle	:Array<Array<Int>>;			// Hit angles
-	private var hitvx		:Array<Array<Int>>;			// Hit x-velocities
-	private var hitvy		:Array<Array<Int>>;			// Hit y-velocities
-	private var hitsp		:Array<Array<Int>>;			// Hit stamina damage
-	private var hithp		:Array<Array<Int>>;			// Hit health damage
+	private var hitpow		:Array<Array<Int>>;			// Hit power
 	private var xshift		:Array<Array<Int>>;  		// x displacement
 	private var yshift		:Array<Array<Int>>;  		// y displacement
 	private var xshove		:Array<Array<Int>>;  		// Add x momentum
 	private var yshove		:Array<Array<Int>>;  		// Add y momentum
 	private var flip		:Array<Array<Int>>; 		// flip frames
+	private var blockHigh	:Array<Array<Int>>; 		// flip frames
+	private var blockLow	:Array<Array<Int>>; 		// flip frames
+	private var dodge		:Array<Array<Int>>; 		// flip frames
 	//private var sfx			:Array<Array<Sound>>;		// sound effects
 		
 	//public var sfxtransform	:SoundTransform;
@@ -101,32 +61,21 @@ class Actor extends Sprite {
 	private var target_r	:Int;
 		
 	public var floormap		:Array<Array<Int>>;
-	//public var dropzones	:Array<Point>;
-		
-	//public var lazer		:Bool;
+			
 	public var prone		:Bool;
-	//public var projectile	:Projectile;
 	private var dead		:Int;
 		
-	//public var floormap		:Array<Array<Int>>;
 	public var difficulty	:Int;
 		
 	public var a			:Int = 0;	// Current animation
 	public var _a			:Int = 0;	// Next animation
 	public var f			:Int = 0;	// Frame
-	//private var w			:Int;	// Frame width
-	//private var h			:Int;	// Frame height
-		
+			
 	public var actor		:Bitmap;
-	public var faction		:Int; // O: Main, 1: Ally, 2: Enemy
-	//public var ombre		:Ombre;
-		
+			
 	private var A			:Int = 16;	// ELLIPSE MAJOR AXIS
 	private var B			:Int = 4;	// ELLIPSE MINOR AXIS
-	//private var AB			:Int = A*B;	// ELLIPSE VARIABLES
-	//private var AA			:Int = A*A;	// ELLIPSE VARIABLES
-	//private var BB			:Int = B*B;	// ELLIPSE VARIABLES
-		
+			
 	// Actor Stats
 	public  var actorName	:String;
 	public  var health		:Int;
@@ -142,27 +91,17 @@ class Actor extends Sprite {
 	private var stats		:Dynamic;
 		
 	// Actor location and movement variables
-	public var elevation	:Int;		// ELEVATION OF ACTOR FOOTING
-	public var altitude		:Float;	// ALTITUDE OF ACTOR
-	//public var locus		:Point = new Point(0,0);
-	public var z_axis		:Int;		
 	public var vx			:Int;	// Characters X momentum
 	public var vy			:Int;	// Characters Y momentum
-	public var vz			:Int;	// Characters X momentum
-	public var pushx		:Int;	// Pushed by another actor
-	public var pushz		:Int;	// Pushed by another actor
 	
 	// TEMPORARY VARIABLE HOLDERS
 	private var tmpxshift	:Int;	// xshift[a][f] holder should declare these when needed = faster
 	private var tmpyshift	:Int;	// yshift[a][f] holder
-	private var melee		:Int;	// hitframe[a][f] holder
-	private var pursue		:Int;	// hitframe[a][f] holder
-		
+			
 	private var tick		:Int = 0;		
 	private var combo		:Int;
 		
 	// Heath Display
-	//public  var healthbar		:HealthBar;
 	private var healthdisplay	:Dynamic;
 	private var healthtick		:Int;
 						
@@ -177,18 +116,15 @@ class Actor extends Sprite {
 		originals = new Array<Array<BitmapData>>();
 		frames = new Array<Array<Int>>();
 		palette = new Array<Array<UInt>>();
-		hit	= new Array<Array<Int>>();
 		hitpow = new Array<Array<Int>>();
-		hitangle = new Array<Array<Int>>();
-		hitvx = new Array<Array<Int>>();
-		hitvy = new Array<Array<Int>>();
-		hitsp = new Array<Array<Int>>();
-		hithp = new Array<Array<Int>>();
 		xshift = new Array<Array<Int>>();
 		yshift = new Array<Array<Int>>();
 		xshove = new Array<Array<Int>>();
 		yshove = new Array<Array<Int>>();
 		flip = new Array<Array<Int>>();
+		blockHigh = new Array<Array<Int>>();
+		blockLow = new Array<Array<Int>>();
+		dodge = new Array<Array<Int>>();
 		
 		// Populate local variables with actionData
 		var actionData:Dynamic = Reflect.field(actorData, "actions");
@@ -201,6 +137,7 @@ class Actor extends Sprite {
 				
 				fieldName = fields[i];
 				
+				// Reserve IDLE = 0, regardless of where in the logic IDLE is defined
 				if (fieldName.toUpperCase() == "IDLE") {
 					idx = 0;
 				} else {
@@ -214,18 +151,15 @@ class Actor extends Sprite {
 				bitmaps[idx] = Reflect.field(Reflect.field(actionData, fieldName), "bitmaps");
 				frames[idx]	= Reflect.field(Reflect.field(actionData, fieldName), "timing");
 				//palette[index]		= $actor.actions[action].palette;
-				hit[idx] = Reflect.field(Reflect.field(actionData, fieldName), "hit");
 				hitpow[idx]	= Reflect.field(Reflect.field(actionData, fieldName), "hitpow");
-				hitangle[idx] = Reflect.field(Reflect.field(actionData, fieldName), "hitangle");
-				hitvx[idx] = Reflect.field(Reflect.field(actionData, fieldName), "hitvx");
-				hitvy[idx] = Reflect.field(Reflect.field(actionData, fieldName), "hitvy");
-				hitsp[idx] = Reflect.field(Reflect.field(actionData, fieldName), "hitsp");
-				hithp[idx] = Reflect.field(Reflect.field(actionData, fieldName), "hithp");
 				xshift[idx] = Reflect.field(Reflect.field(actionData, fieldName), "xshift");
 				yshift[idx] = Reflect.field(Reflect.field(actionData, fieldName), "yshift");
 				xshove[idx] = Reflect.field(Reflect.field(actionData, fieldName), "xshove");
 				yshove[idx] = Reflect.field(Reflect.field(actionData, fieldName), "yshove");
 				flip[idx] = Reflect.field(Reflect.field(actionData, fieldName), "flip");
+				blockHigh[idx] = Reflect.field(Reflect.field(actionData, fieldName), "blockHigh");
+				blockLow[idx] = Reflect.field(Reflect.field(actionData, fieldName), "blockLow");
+				dodge[idx] = Reflect.field(Reflect.field(actionData, fieldName), "dodge");
 				//sfx[index]			= $actor.actions[action].sfx;
 			}
 
@@ -236,7 +170,7 @@ class Actor extends Sprite {
 		
 		var statsData:Dynamic = Reflect.field(actorData, "stats");
 		actorName = Reflect.field(statsData, "NAME");
-		
+		trace(actorName);
 		addChild(actor = new Bitmap());
 		actor.bitmapData = bitmaps[0][0];
 		cacheAsBitmap = true;
@@ -991,7 +925,7 @@ class Actor extends Sprite {
 						}
 					} 
 					
-					if( _a == DEAD ) {
+					if( _a == KNOCKDOWN ) {
 						_a = a;
 						f = 1;
 						tick = dead = 80;
@@ -1020,7 +954,7 @@ class Actor extends Sprite {
 				// ADD ADDITIONAL Y VELOCITY
 				if (yshove[a][f] > 0) {
 					vy += yshove[a][f];
-					if( altitude != altitude ) altitude = elevation;
+					//if( altitude != altitude ) altitude = elevation;
 				}
 				
 				// SHIFT BITMAP PIXELS
@@ -1033,7 +967,7 @@ class Actor extends Sprite {
 				scaleX *= flip[a][f];
 				
 				// HIT FRAME
-				melee = hit[a][f];
+				//melee = hit[a][f];
 				//hit[a][f] == 255 ? shoot = 255 : melee = hit[a][f];
 				
 				// PLAY SFX
@@ -1130,13 +1064,34 @@ class Actor extends Sprite {
 		*/
 		
 		/**
-		 * Punch key was pressed
+		 * Button B was pressed
 		 */
-		public function punchKey():Void {
-			trace("actor.punchKey()");
-			if (a != PUNCH1) {
-				forceAnimation(PUNCH1, IDLE);
+		public function highPunchB():Void {
+			if (a != HIGH_PUNCH_B) {
+				forceAnimation(HIGH_PUNCH_B, IDLE);
 			}
+		}
+		
+		public function lowPunchB():Void {
+			if (a != LOW_PUNCH_B) {
+				forceAnimation(LOW_PUNCH_B, IDLE);
+			}
+		}
+		
+		/**
+		 * Button A was pressed
+		 */
+		public function highPunchA():Void {
+			if (a != HIGH_PUNCH_A) {
+				forceAnimation(HIGH_PUNCH_A, IDLE);
+			}
+		}
+		
+		public function lowPunchA():Void {
+			if (a != LOW_PUNCH_A) {
+				forceAnimation(LOW_PUNCH_A, IDLE);
+			}
+		}
 			
 			
 			/*
@@ -1192,7 +1147,7 @@ class Actor extends Sprite {
 						} break;
 				}
 			}
-			*/	
+			
 		}
 		/*
 				
