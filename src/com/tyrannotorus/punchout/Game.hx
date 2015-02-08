@@ -119,6 +119,7 @@ class Game extends Sprite {
 			case 37:
 				if (leftKey == false) {
 					leftKey = true;
+					player.dodgeLeft();
 				}
 			
 			// Up key
@@ -131,12 +132,14 @@ class Game extends Sprite {
 			case 39:
 				if (rightKey == false) {
 					rightKey = true;
+					player.dodgeRight();
 				}
 			
 			// Down Key
 			case 40:
 				if (downKey == false) {
 					downKey = true;
+					player.duck(true);
 				}
 			
 			// X Key
@@ -175,6 +178,7 @@ class Game extends Sprite {
 				rightKey = false;
 			case 40:
 				downKey = false;
+				player.duck(false);
 			case 88:
 				xKey = false;
 			case 90:

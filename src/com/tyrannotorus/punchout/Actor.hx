@@ -13,10 +13,16 @@ class Actor extends Sprite {
 		
 	public var IDLE			:Int = 0;
 	public var WALK			:Int;
-	public var HIGH_PUNCH_B	:Int;
-	public var HIGH_PUNCH_A	:Int;
-	public var LOW_PUNCH_B	:Int;
-	public var LOW_PUNCH_A	:Int;
+	public var PUNCH_HIGH_A	:Int;
+	public var PUNCH_LOW_A	:Int;
+	public var PUNCH_HIGH_B	:Int;
+	public var PUNCH_LOW_B	:Int;
+	public var UPPERCUT		:Int;
+	public var BLOCK_HIGH	:Int;
+	public var BLOCK_LOW	:Int;
+	public var DODGE_LEFT	:Int;
+	public var DODGE_RIGHT	:Int;
+	public var DUCK			:Int;
 	public var RISEUP		:Int;
 	public var KNOCKDOWN	:Int = 99;
 	public var STUN			:Int;
@@ -1067,14 +1073,14 @@ class Actor extends Sprite {
 		 * Button B was pressed
 		 */
 		public function highPunchB():Void {
-			if (a != HIGH_PUNCH_B) {
-				forceAnimation(HIGH_PUNCH_B, IDLE);
+			if (a != PUNCH_HIGH_B) {
+				forceAnimation(PUNCH_HIGH_B, IDLE);
 			}
 		}
 		
 		public function lowPunchB():Void {
-			if (a != LOW_PUNCH_B) {
-				forceAnimation(LOW_PUNCH_B, IDLE);
+			if (a != PUNCH_LOW_B) {
+				forceAnimation(PUNCH_LOW_B, IDLE);
 			}
 		}
 		
@@ -1082,14 +1088,48 @@ class Actor extends Sprite {
 		 * Button A was pressed
 		 */
 		public function highPunchA():Void {
-			if (a != HIGH_PUNCH_A) {
-				forceAnimation(HIGH_PUNCH_A, IDLE);
+			if (a != PUNCH_HIGH_A) {
+				forceAnimation(PUNCH_HIGH_A);
+			} else {
+				_a = PUNCH_HIGH_A;
 			}
 		}
 		
 		public function lowPunchA():Void {
-			if (a != LOW_PUNCH_A) {
-				forceAnimation(LOW_PUNCH_A, IDLE);
+			if (a == IDLE) {
+				forceAnimation(PUNCH_LOW_A);
+			} else {
+				_a = PUNCH_LOW_A;
+			}
+		}
+		
+		public function dodgeLeft():Void {
+			if (a == IDLE) {
+				forceAnimation(DODGE_LEFT);
+			} else {
+				_a = DODGE_LEFT;
+			}
+		}
+		
+		public function dodgeRight():Void {
+			if (a == IDLE) {
+				forceAnimation(DODGE_RIGHT);
+			} else {
+				_a = DODGE_RIGHT;
+			}
+		}
+		
+		public function duck(ducking:Bool):Void {
+			if(ducking == true){
+				if (a == IDLE) {
+					forceAnimation(DUCK);
+				} else {
+					_a = DUCK;
+				}
+			} else {
+				if (a == DUCK) {
+					forceAnimation(IDLE);
+				}
 			}
 		}
 			

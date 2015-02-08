@@ -25,7 +25,7 @@
 	timing:6
 	timing:6
 	
-	frames.HIGH_PUNCH_B (0,1)
+	frames.PUNCH_HIGH_B (0,1)
 	timing:1, xshift:-2
 	timing:1, xshift:-4, yshift:-4
 	timing:1, xshift:-2, yshift:-12
@@ -37,7 +37,7 @@
 	timing:1, xshift:-4, yshift:-4
 	timing:1, xshift:-1
 	
-	frames.HIGH_PUNCH_A (0,2)
+	frames.PUNCH_HIGH_A (0,2)
 	timing:1, xshift:-1
 	timing:1, xshift:-3, yshift:-4
 	timing:1, xshift:0, yshift:-12
@@ -47,6 +47,42 @@
 	timing:1, xshift:3, yshift:-21
 	timing:1, xshift:0, yshift:-12
 	timing:1, xshift:-3, yshift:-4
+	
+	frames.DODGE_LEFT (0,3)
+	timing:1, xshift:-1
+	timing:1, xshift:-6, yshift:-4
+	timing:1, xshift:-9, yshift:-4
+	timing:1, xshift:-12, yshift:-4
+	timing:1, xshift:-17
+	timing:1, xshift:-17
+	timing:1, xshift:-17
+	timing:1, xshift:-16
+	timing:1, xshift:-17, yshift:-4
+	timing:1, xshift:-15, yshift:-4
+	timing:1, xshift:-13, yshift:-4
+	timing:1, xshift:-11, yshift:-4
+	timing:1, xshift:-8, yshift:-4
+	timing:1, xshift:-3
+	
+	frames.DODGE_RIGHT (0,4)
+	timing:1, xshift:1
+	timing:1, yshift:-4
+	timing:1, xshift:2, yshift:-4
+	timing:1, xshift:4, yshift:-4
+	timing:1, xshift:13, yshift:-4
+	timing:1, xshift:13, yshift:-4
+	timing:1, xshift:18, yshift:-4
+	timing:1, xshift:17, yshift:-1
+	timing:1, xshift:11, yshift:-4
+	timing:1, xshift:10, yshift:-4
+	timing:1, xshift:5, yshift:-4
+	timing:1, xshift:2, yshift:-4
+	timing:1, xshift:-1, yshift:-4
+	
+	frames.DUCK (0,5)
+	timing:3
+	timing:10000
+		
 	
 	
 ;	frames.HOP (8,0)
