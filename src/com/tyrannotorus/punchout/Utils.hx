@@ -10,13 +10,6 @@ import motion.Actuate;
 
 class Utils {
 	
-	private static var pointNW:Point = new Point(0, 0);
-	private static var pointNE:Point = new Point(2, 0);
-	private static var pointSW:Point = new Point(0, 1);
-	private static var pointSE:Point = new Point(2, 1);
-	private static var pointUppercut:Point = new Point(1, 0);
-	private static var pointHit:Point = new Point(1, 1);
-	
 	public static function centerX(displayObject:DisplayObject):Int {
 		var bounds:Rectangle = displayObject.getRect(displayObject);
 		return Std.int((Constants.GAME_WIDTH - bounds.width) * 0.5);
@@ -139,13 +132,11 @@ class Utils {
 		
 		// Copy and Fill animation cells
 		var fields:Array<Dynamic> = Reflect.fields(actions);
-		trace(fields.length);
 		for (key in Reflect.fields(actions)) {
 			var actionData:Dynamic = Reflect.field(actions, key);
 			var point:Point = Reflect.field(frameCoordinates, key);
 			Reflect.setField(actionData, "bitmaps", new Array<BitmapData>());
 			var len:Int = Reflect.field(actionData, "timing").length;
-			trace(key + " " + len);
 			for(i in 0...len) {
 				var posX:Int = Std.int(point.x * cellWidth + point.x + i * (cellWidth + 1));
 				var posY:Int = Std.int(point.y * cellHeight + point.y);

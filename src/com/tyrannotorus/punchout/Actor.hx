@@ -170,13 +170,12 @@ class Actor extends Sprite {
 			}
 
 		} catch(e:String) {
-			trace("unable to set variable " + e);
+			trace("Unable to set variable " + e);
 			return;
 		}
 		
 		var statsData:Dynamic = Reflect.field(actorData, "stats");
 		actorName = Reflect.field(statsData, "NAME");
-		trace(actorName);
 		addChild(actor = new Bitmap());
 		actor.bitmapData = bitmaps[0][0];
 		cacheAsBitmap = true;
