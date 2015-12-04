@@ -6,20 +6,22 @@ import openfl.events.Event;
 
 class Main extends Sprite {
 
-	// Game Dimensions
 	private var game:Game;
-		
+	
+	/**
+	 * Constructor.
+	 */
 	public function new() {
 		super();
 		game = new Game();
 		addChild(game);
-		addGameListeners();
+		addListeners();
 	}
 	
 	/**
-	 * Adds Listeners necessary to game
+	 * Adds Listeners necessary to game.
 	 */
-	private function addGameListeners():Void {
+	private function addListeners():Void {
 		stage.addEventListener(Event.RESIZE, onGameResize);
 	}
 	

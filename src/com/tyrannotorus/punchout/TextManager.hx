@@ -12,11 +12,20 @@ import motion.Actuate;
 import motion.easing.Bounce;
 import motion.easing.Cubic;
 
-@:bitmap("assets/fonts/bmd_font_custom7x7.png") 	class FontLarge extends BitmapData { }
-@:bitmap("assets/fonts/bmd_font_custom5x5.png") 	class FontSmall extends BitmapData { }
-@:bitmap("assets/fonts/bmd_font_ironsword.png")		class FontIronsword extends BitmapData { }
-@:bitmap("assets/fonts/bmd_font_sopwith.png")		class FontSopwith extends BitmapData { }
-@:bitmap("assets/fonts/bmd_font_punchout.png")		class FontPunchOut extends BitmapData { }
+@:bitmap("assets/fonts/bmd_font_custom7x7.png")
+class FontLarge extends BitmapData { }
+
+@:bitmap("assets/fonts/bmd_font_custom5x5.png")
+class FontSmall extends BitmapData { }
+
+@:bitmap("assets/fonts/bmd_font_ironsword.png")
+class FontIronsword extends BitmapData { }
+
+@:bitmap("assets/fonts/bmd_font_sopwith.png")
+class FontSopwith extends BitmapData { }
+
+@:bitmap("assets/fonts/bmd_font_punchout.png")
+class FontPunchOut extends BitmapData { }
 
 class TextManager {
 	

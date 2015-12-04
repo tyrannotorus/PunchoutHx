@@ -13,19 +13,27 @@ class Actor extends Sprite {
 		
 	public var IDLE			:Int = 0;
 	public var WALK			:Int;
+	public var DODGE_LEFT	:Int;
+	public var DODGE_RIGHT	:Int;
+	public var RISEUP		:Int;
+	public var KNOCKDOWN	:Int = 99;
+	
+	// Mac-specific variables
 	public var PUNCH_HIGH_A	:Int;
 	public var PUNCH_LOW_A	:Int;
 	public var PUNCH_HIGH_B	:Int;
 	public var PUNCH_LOW_B	:Int;
 	public var UPPERCUT		:Int;
+	public var DUCK			:Int;
+	public var STUN			:Int;
+	
+	// Opponent specific variables
 	public var BLOCK_HIGH	:Int;
 	public var BLOCK_LOW	:Int;
-	public var DODGE_LEFT	:Int;
-	public var DODGE_RIGHT	:Int;
-	public var DUCK			:Int;
-	public var RISEUP		:Int;
-	public var KNOCKDOWN	:Int = 99;
-	public var STUN			:Int;
+	
+	
+	
+	
 						
 	// Attack combos
 	public  var grappling		:Bool;	// To prevent movement during grapple
@@ -42,7 +50,7 @@ class Actor extends Sprite {
 	private var originals	:Array<Array<BitmapData>>;
 	private var palette		:Array<Array<UInt>>;
 	private var frames		:Array<Array<Int>>; 		// Frame timings
-	private var hitpow		:Array<Array<Int>>;			// Hit power
+	private var hit			:Array<Array<Int>>;			// Hit power
 	private var xshift		:Array<Array<Int>>;  		// x displacement
 	private var yshift		:Array<Array<Int>>;  		// y displacement
 	private var xshove		:Array<Array<Int>>;  		// Add x momentum
@@ -95,6 +103,7 @@ class Actor extends Sprite {
 	private var jumppower	:Int;
 	private var zspeed		:Float;
 	private var stats		:Dynamic;
+	private var hitPower	:Int;
 		
 	// Actor location and movement variables
 	public var vx			:Int;	// Characters X momentum
@@ -112,17 +121,27 @@ class Actor extends Sprite {
 	private var healthtick		:Int;
 						
 	public var doubletap	:Int;
+	private var player:Actor;
+	private var opponent:Actor;
 		
 		
-	public function new(actorData:Dynamic):Void {
+	public function new(actorData:Dynamic, player:Actor = null):Void {
 		
 		super();
+		
+		if (player != null) {
+			this.player = player;
+			PUNCH_HIGH_A = player.PUNCH_HIGH_A;
+			PUNCH_HIGH_B = player.PUNCH_HIGH_B;
+			PUNCH_LOW_A = player.PUNCH_LOW_A;
+			PUNCH_LOW_B = player.PUNCH_LOW_B;			
+		}
 		
 		bitmaps	= new Array<Array<BitmapData>>();
 		originals = new Array<Array<BitmapData>>();
 		frames = new Array<Array<Int>>();
 		palette = new Array<Array<UInt>>();
-		hitpow = new Array<Array<Int>>();
+		hit = new Array<Array<Int>>();
 		xshift = new Array<Array<Int>>();
 		yshift = new Array<Array<Int>>();
 		xshove = new Array<Array<Int>>();
@@ -156,8 +175,7 @@ class Actor extends Sprite {
 				originals[idx] = Reflect.field(Reflect.field(actionData, fieldName), "bitmaps");
 				bitmaps[idx] = Reflect.field(Reflect.field(actionData, fieldName), "bitmaps");
 				frames[idx]	= Reflect.field(Reflect.field(actionData, fieldName), "timing");
-				//palette[index]		= $actor.actions[action].palette;
-				hitpow[idx]	= Reflect.field(Reflect.field(actionData, fieldName), "hitpow");
+				hit[idx]	= Reflect.field(Reflect.field(actionData, fieldName), "hit");
 				xshift[idx] = Reflect.field(Reflect.field(actionData, fieldName), "xshift");
 				yshift[idx] = Reflect.field(Reflect.field(actionData, fieldName), "yshift");
 				xshove[idx] = Reflect.field(Reflect.field(actionData, fieldName), "xshove");
@@ -832,7 +850,7 @@ class Actor extends Sprite {
 		 * @param {Int} nextAni - Animation that follows the new animation
 		 * @param {Bool} now - force the bitmapData to change this frame
 		 */
-		private function forceAnimation(newAni:Int = 0, nextAni:Int = 0, now:Bool = false):Void {
+		public function forceAnimation(newAni:Int = 0, nextAni:Int = 0, now:Bool = false):Void {
 			if(a != newAni) {
 				f = tick = 0;	// Reset frame time
 				a = newAni;		// Set new animation
@@ -843,6 +861,71 @@ class Actor extends Sprite {
 				comboChain = (comboChain == 3) ? 2 : 0;
 			}
 		}
+		
+		
+		public function setOpponent(opponent:Actor):Void {
+			this.opponent = opponent;
+			BLOCK_HIGH = opponent.BLOCK_HIGH;
+			BLOCK_LOW = opponent.BLOCK_LOW;
+		}
+		
+		
+		/**
+		 * The player has punched the opponent
+		 * @param {Int} punchType
+		 * @param {Int} power
+		 */
+		public function punch(punchType:Int, power:Int):Void {
+			
+			// Uppercut
+			if (punchType == UPPERCUT) {
+				
+			// High Left Punch
+			} else if (punchType == PUNCH_HIGH_B) {
+								
+				if (blockHigh[a][f] > 0) {
+					trace("punch high left blocked!");
+				} else {
+					trace("punch high left hit!");
+				}
+			
+			// High Right Punch
+			} else if (punchType == PUNCH_HIGH_A) {
+								
+				if (blockHigh[a][f] > 0) {
+					trace("punch high right blocked!");
+				} else {
+					trace("punch high right hit!");
+				}
+			
+			// Low Left punch
+			} else if (punchType == PUNCH_LOW_B) {
+								
+				if (blockLow[a][f] > 0) {
+					trace("punch low left blocked!");
+				} else {
+					trace("punch low left hit!");
+				}
+			
+			// Low Right punch
+			} else if (punchType == PUNCH_LOW_A) {
+								
+				if (blockLow[a][f] > 0) {
+					trace("punch low right blocked!");
+				} else {
+					trace("punch low right hit!");
+				}
+			}
+			
+		}
+		
+		/*
+		 * 
+		 * Oppenent will follow an animation routine for a set
+		 * amount of time, then go into another routine
+		 * like when tyson always does blinky blink punches once when time > 2:30 in 2nd round (so > 5:30)
+		 * 
+		 * /
 		
 		/*
 		
@@ -972,8 +1055,10 @@ class Actor extends Sprite {
 				scaleX *= flip[a][f];
 				
 				// HIT FRAME
-				//melee = hit[a][f];
-				//hit[a][f] == 255 ? shoot = 255 : melee = hit[a][f];
+				hitPower = hit[a][f];
+				if (hitPower > 0) {
+					opponent.punch(a, hitPower);
+				}
 				
 				// PLAY SFX
 				//if( sfx[a][f] != null )

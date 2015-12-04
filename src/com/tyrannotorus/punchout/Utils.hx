@@ -174,7 +174,6 @@ class Utils {
 		Reflect.setField(actionData, "dodge", new Array<Int>());
 		Reflect.setField(actionData, "uppercut", new Array<Int>());
 		Reflect.setField(actionData, "hit", new Array<Int>());
-		Reflect.setField(actionData, "hithp", new Array<Int>());
 		Reflect.setField(actionData, "xshift", new Array<Int>());
 		Reflect.setField(actionData, "yshift", new Array<Int>());
 		Reflect.setField(actionData, "xshove", new Array<Int>());

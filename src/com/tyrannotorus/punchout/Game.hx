@@ -32,9 +32,7 @@ class Game extends Sprite {
 		
 	// Fonts and text typing
 	public var textManager:TextManager;
-	
-	private var externalAssetLoader:ExternalAssetLoader;
-	
+		
 	// Music and sfx
 	private var music:Sound;
 	private var musicChannel:SoundChannel;
@@ -72,9 +70,9 @@ class Game extends Sprite {
 		testText.fontSet = 4;
 		addChild(textManager.typeText(testText));
 		
-		externalAssetLoader = new ExternalAssetLoader();
-		externalAssetLoader.addEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset, false, 0, true);
-		externalAssetLoader.load("http://sites.google.com/site/tyrannotorus/01-glassjoe.zip", ["spritesheet.png", "logic.txt"]);
+		var assetLoader:AssetLoader = new AssetLoader();
+		assetLoader.addEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset);
+		assetLoader.loadAsset("http://sites.google.com/site/tyrannotorus/01-glassjoe.zip");
 				
 		musicTransform = new SoundTransform(0.1);
 		music = Assets.getSound("audio/title_music.mp3", true);
@@ -87,7 +85,13 @@ class Game extends Sprite {
 	 * @param {DataEvent.LOAD_COMPLETE}	e
 	 */
 	private function parseExternalAsset(e:DataEvent):Void {
-		externalAssetLoader.removeEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset);
+		trace("parseExternalAsset");
+		var assetLoader:AssetLoader = cast(e.target, AssetLoader);
+		assetLoader.removeEventListener(DataEvent.LOAD_COMPLETE, parseExternalAsset);
+		
+		if (e.data == null) {
+			return;
+		}
 		
 		var spritesheet:Bitmap = Reflect.field(e.data, "spritesheet.png");
 		var logic:String = Reflect.field(e.data, "logic.txt");
